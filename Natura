@@ -1,0 +1,37 @@
+import discord
+
+from discord.ext import commands
+
+intents=discord.Intents.default()
+intents.message_content=True
+
+natura = commands.Bot(command_prefix="_", intents=intents)
+
+@natura.event
+async def on_ready():
+    print("Bot en linea ve a discord")
+
+@natura.command()
+async def hola(ctx):
+    await ctx.send("Hola soy natura, ¿qué quieres saber hoy? (Qué es la contaminación?, Cómo puedo ayudar? Qué es el reciclaje?, Qué es la energía renovable?)")
+
+    def check(m):
+        return m.author == ctx.author and m.channel == ctx.channel
+
+    try:
+        msg = await natura.wait_for('message', check=check, timeout=30)  # espera 30 segundos por la respuesta
+
+        if "contaminación" in msg.content.lower():
+            await ctx.send("La contaminación es la introducción de sustancias dañinas en el medio ambiente.")
+        elif "ayudar" in msg.content.lower():
+            await ctx.send("Puedes ayudar reciclando y cuidando la naturaleza.")
+        elif "reciclaje" in msg.content.lower():
+            await ctx.send("El reciclaje es el proceso de convertir materiales usados en nuevos productos para cuidar el ambiente.")
+        elif "energía" in msg.content.lower():
+            await ctx.send("La energía renovable proviene del sol, viento y agua, y es buena para el planeta.")
+        else:
+            await ctx.send("No entendí tu pregunta, pero estoy aquí para ayudarte.")
+
+    except asyncio.TimeoutError:
+        await ctx.send("No respondiste a tiempo. Por favor, intenta de nuevo.")
+
